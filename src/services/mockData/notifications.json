@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "type": "student",
+    "title": "New Student Enrollment",
+    "message": "Sarah Johnson has enrolled in Advanced Mathematics batch",
+    "timestamp": "2024-12-19T10:30:00Z",
+    "isRead": false,
+    "relatedId": 3,
+    "relatedType": "student"
+  },
+  {
+    "Id": 2,
+    "type": "payment",
+    "title": "Payment Received",
+    "message": "Fee payment of $500 received from John Smith",
+    "timestamp": "2024-12-19T09:15:00Z",
+    "isRead": false,
+    "relatedId": 1,
+    "relatedType": "student"
+  },
+  {
+    "Id": 3,
+    "type": "batch",
+    "title": "Batch Schedule Updated",
+    "message": "Physics Fundamentals batch schedule changed to Monday 2:00 PM",
+    "timestamp": "2024-12-19T08:45:00Z",
+    "isRead": true,
+    "relatedId": 2,
+    "relatedType": "batch"
+  },
+  {
+    "Id": 4,
+    "type": "teacher",
+    "title": "New Teacher Assignment",
+    "message": "Dr. Michael Brown assigned to Chemistry Advanced batch",
+    "timestamp": "2024-12-18T16:20:00Z",
+    "isRead": false,
+    "relatedId": 2,
+    "relatedType": "teacher"
+  },
+  {
+    "Id": 5,
+    "type": "system",
+    "title": "System Maintenance",
+    "message": "Scheduled maintenance will occur this Sunday from 2:00 AM to 4:00 AM",
+    "timestamp": "2024-12-18T14:00:00Z",
+    "isRead": true,
+    "relatedId": null,
+    "relatedType": "system"
+  },
+  {
+    "Id": 6,
+    "type": "student",
+    "title": "Student Attendance Alert",
+    "message": "Emily Davis has been absent for 3 consecutive classes",
+    "timestamp": "2024-12-18T11:30:00Z",
+    "isRead": false,
+    "relatedId": 5,
+    "relatedType": "student"
+  },
+  {
+    "Id": 7,
+    "type": "payment",
+    "title": "Payment Overdue",
+    "message": "Fee payment overdue for Alex Wilson - Mathematics batch",
+    "timestamp": "2024-12-17T15:45:00Z",
+    "isRead": false,
+    "relatedId": 4,
+    "relatedType": "student"
+  },
+  {
+    "Id": 8,
+    "type": "batch",
+    "title": "New Batch Created",
+    "message": "Advanced Chemistry batch created with 15 students enrolled",
+    "timestamp": "2024-12-17T13:20:00Z",
+    "isRead": true,
+    "relatedId": 4,
+    "relatedType": "batch"
+  }
+]

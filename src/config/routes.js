@@ -9,6 +9,7 @@ import Schedule from '@/components/pages/Schedule';
 import Fees from '@/components/pages/Fees';
 import Teachers from '@/components/pages/Teachers';
 import AddTeacher from '@/components/pages/AddTeacher';
+import Notifications from '@/components/pages/Notifications';
 
 export const routes = {
   dashboard: {
@@ -91,7 +92,14 @@ export const routes = {
     path: '/teachers/add',
     icon: 'UserPlus',
     component: AddTeacher,
-    hideFromNav: true
+hideFromNav: true
+  },
+  notifications: {
+    id: 'notifications',
+    label: 'Notifications',
+    path: '/notifications',
+    icon: 'Bell',
+    component: Notifications
   }
 };
 

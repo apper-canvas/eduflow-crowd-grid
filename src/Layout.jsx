@@ -3,24 +3,25 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import batchService from "@/services/api/batchService";
 import studentService from "@/services/api/studentService";
+import notificationService from "@/services/api/notificationService";
 import routes from "@/config/routes";
 import ApperIcon from "@/components/ApperIcon";
 import Batches from "@/components/pages/Batches";
 import Students from "@/components/pages/Students";
 import SearchBar from "@/components/molecules/SearchBar";
-
 const Layout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState({ students: [], batches: [] });
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
   const searchRef = useRef(null);
   const navigationItems = Object.values(routes).filter(route => !route.hideFromNav);
 
-  useEffect(() => {
+useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSearchResults(false);
@@ -31,6 +32,21 @@ const Layout = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    loadUnreadNotifications();
+    // Poll for unread count every 30 seconds
+    const interval = setInterval(loadUnreadNotifications, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadUnreadNotifications = async () => {
+    try {
+      const count = await notificationService.getUnreadCount();
+      setUnreadNotifications(count);
+    } catch (error) {
+      console.error('Failed to load unread notifications:', error);
+    }
+  };
   const handleSearch = async (query) => {
     setSearchQuery(query);
     
@@ -204,9 +220,16 @@ damping: 30
               )}
             </div>
             
-            <button className="p-2 text-gray-600 hover:text-gray-900 relative">
+<button 
+              onClick={() => navigate('/notifications')}
+              className="p-2 text-gray-600 hover:text-gray-900 relative transition-colors"
+            >
               <ApperIcon name="Bell" size={20} />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full"></span>
+              {unreadNotifications > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-error text-white text-xs rounded-full flex items-center justify-center font-medium">
+                  {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                </span>
+              )}
             </button>
             <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
               <ApperIcon name="User" size={16} className="text-gray-600" />
