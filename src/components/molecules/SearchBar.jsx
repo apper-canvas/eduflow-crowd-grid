@@ -16,16 +16,19 @@ const SearchBar = ({
     onSearch?.(query);
   };
 
-  const handleChange = (e) => {
+const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
     
+    // Clear previous timeout
+    if (window.searchTimeout) {
+      clearTimeout(window.searchTimeout);
+    }
+    
     // Debounced search
-    const timeoutId = setTimeout(() => {
+    window.searchTimeout = setTimeout(() => {
       onSearch?.(value);
     }, 300);
-
-    return () => clearTimeout(timeoutId);
   };
 
   return (

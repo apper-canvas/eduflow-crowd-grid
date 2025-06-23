@@ -1,14 +1,75 @@
-import { useState } from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import ApperIcon from '@/components/ApperIcon';
-import { routes } from '@/config/routes';
+import React, { useEffect, useRef, useState } from "react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import batchService from "@/services/api/batchService";
+import studentService from "@/services/api/studentService";
+import routes from "@/config/routes";
+import ApperIcon from "@/components/ApperIcon";
+import Batches from "@/components/pages/Batches";
+import Students from "@/components/pages/Students";
+import SearchBar from "@/components/molecules/SearchBar";
 
 const Layout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState({ students: [], batches: [] });
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const location = useLocation();
-
+  const navigate = useNavigate();
+  const searchRef = useRef(null);
   const navigationItems = Object.values(routes).filter(route => !route.hideFromNav);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+    
+    if (!query.trim()) {
+      setSearchResults({ students: [], batches: [] });
+      setShowSearchResults(false);
+      return;
+    }
+
+    setSearchLoading(true);
+    setShowSearchResults(true);
+
+    try {
+      const [students, batches] = await Promise.all([
+        studentService.searchStudents(query),
+        batchService.searchBatches(query)
+      ]);
+
+      setSearchResults({
+        students: students.slice(0, 5), // Limit results
+        batches: batches.slice(0, 5)
+      });
+    } catch (error) {
+      console.error('Search failed:', error);
+      setSearchResults({ students: [], batches: [] });
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const handleResultClick = (type, id) => {
+    if (type === 'student') {
+      navigate(`/students/${id}`);
+    } else if (type === 'batch') {
+      navigate(`/batches/${id}`);
+    }
+    setShowSearchResults(false);
+    setSearchQuery('');
+  };
 
   const sidebarVariants = {
     open: {
@@ -24,11 +85,11 @@ const Layout = () => {
       transition: {
         type: "spring",
         stiffness: 300,
-        damping: 30
+damping: 30
       }
     }
   };
-
+  
   const overlayVariants = {
     open: {
       opacity: 1,
@@ -60,15 +121,89 @@ const Layout = () => {
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
-            <div className="relative hidden md:block">
-              <input
-                type="text"
+<div className="flex items-center space-x-4">
+            <div className="relative hidden md:block" ref={searchRef}>
+              <SearchBar
                 placeholder="Search students, batches..."
-                className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                onSearch={handleSearch}
+                className="w-64"
               />
-              <ApperIcon name="Search" size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              
+              {showSearchResults && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto"
+                >
+                  {searchLoading ? (
+                    <div className="p-4 text-center text-gray-500">
+                      <ApperIcon name="Loader2" size={20} className="animate-spin mx-auto mb-2" />
+                      Searching...
+                    </div>
+                  ) : (
+                    <div className="py-2">
+                      {searchResults.students.length > 0 && (
+                        <div>
+                          <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Students
+                          </div>
+                          {searchResults.students.map((student) => (
+                            <button
+                              key={student.Id}
+                              onClick={() => handleResultClick('student', student.Id)}
+                              className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-3"
+                            >
+                              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                                <span className="text-primary font-medium text-sm">
+                                  {student.name.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{student.name}</div>
+                                <div className="text-sm text-gray-500">{student.email}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {searchResults.batches.length > 0 && (
+                        <div>
+                          {searchResults.students.length > 0 && <div className="border-t border-gray-100 my-2" />}
+                          <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Batches
+                          </div>
+                          {searchResults.batches.map((batch) => (
+                            <button
+                              key={batch.Id}
+                              onClick={() => handleResultClick('batch', batch.Id)}
+                              className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center gap-3"
+                            >
+                              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                                <ApperIcon name="BookOpen" size={16} className="text-primary" />
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{batch.name}</div>
+                                <div className="text-sm text-gray-500">{batch.subject} • {batch.schedule.time}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {searchResults.students.length === 0 && searchResults.batches.length === 0 && searchQuery && (
+                        <div className="px-3 py-6 text-center text-gray-500">
+                          <ApperIcon name="Search" size={24} className="mx-auto mb-2 text-gray-400" />
+                          <div className="text-sm">No results found for "{searchQuery}"</div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              )}
             </div>
+            
             <button className="p-2 text-gray-600 hover:text-gray-900 relative">
               <ApperIcon name="Bell" size={20} />
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full"></span>

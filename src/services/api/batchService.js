@@ -71,7 +71,18 @@ export const batchService = {
     }
     batches[index].enrolledCount = enrolledCount;
     return { ...batches[index] };
+return { ...batches[index] };
+  },
+
+  async searchBatches(query) {
+    await delay(200);
+    const lowerQuery = query.toLowerCase();
+    const filtered = batches.filter(b =>
+      b.name.toLowerCase().includes(lowerQuery) ||
+      b.subject.toLowerCase().includes(lowerQuery) ||
+      b.room.toLowerCase().includes(lowerQuery)
+    );
+    return [...filtered];
   }
 };
-
 export default batchService;
