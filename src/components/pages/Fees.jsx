@@ -25,11 +25,11 @@ function Fees() {
     loadData();
   }, []);
 
-  const loadData = async () => {
+const loadData = async () => {
     try {
       setLoading(true);
       const [paymentsData, studentsData] = await Promise.all([
-        paymentService.getPayments(),
+        paymentService.getAll(),
         studentService.getStudents()
       ]);
       setFees(paymentsData);
