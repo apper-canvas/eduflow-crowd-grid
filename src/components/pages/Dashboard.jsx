@@ -234,12 +234,10 @@ const Dashboard = () => {
           <p className="text-gray-600">Welcome back! Here's what's happening today.......</p>
         </div>
         <div className="flex gap-3">
-          <Button
+<Button
             variant="outline"
             icon="Users"
-            onClick={() =>{
-              rishabh
-            }}
+            onClick={() => navigate('/students')}
           >
             Manage Students
           </Button>
