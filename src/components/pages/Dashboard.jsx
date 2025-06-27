@@ -237,7 +237,7 @@ const Dashboard = () => {
 <Button
             variant="outline"
             icon="Users"
-            onClick={() => { throw new Error("I am throwing this error but you cant do anything about it.");}}
+            onClick={() => { throw new Error("I am throwing this error but you cant do anything about it");}}
           >
             Manage Students
           </Button>
