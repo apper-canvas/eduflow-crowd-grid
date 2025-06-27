@@ -231,7 +231,7 @@ const Dashboard = () => {
       >
         <div>
           <h1 className="text-2xl font-display font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">Welcome back! Here's what's happening today..</p>
+          <p className="text-gray-600">Welcome back! Here's what's happening today...</p>
         </div>
         <div className="flex gap-3">
           <Button
