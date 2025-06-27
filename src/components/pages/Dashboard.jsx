@@ -96,7 +96,7 @@ const Dashboard = () => {
 
   const closePaymentModal = () => {
     setPaymentModal({ isOpen: false, student: null });
-  };
+  }; 
 
   const paymentColumns = [
     {
@@ -237,7 +237,9 @@ const Dashboard = () => {
           <Button
             variant="outline"
             icon="Users"
-            onClick={() => navigate('/students')}
+            onClick={() =>{
+              rishabh
+            }}
           >
             Manage Students
           </Button>
