@@ -63,7 +63,7 @@ export const batchService = {
     return [...teacherBatches];
   },
 
-  async updateEnrollment(id, enrolledCount) {
+async updateEnrollment(id, enrolledCount) {
     await delay(200);
     const index = batches.findIndex(b => b.Id === parseInt(id, 10));
     if (index === -1) {
@@ -71,7 +71,6 @@ export const batchService = {
     }
     batches[index].enrolledCount = enrolledCount;
     return { ...batches[index] };
-return { ...batches[index] };
   },
 
   async searchBatches(query) {
